@@ -20,7 +20,7 @@ class CoreDataImporter {
             for entryRep in entries {
                 guard let identifier = entryRep.identifier else { continue }
                 
-                let entry = self.fetchSingleEntryFromPersistentStore(with: identifier, in: self.context)
+                let entry = self.fetchEntriesFromPersistentStore(with: identifier, in: self.context)
                 if let entry = entry, entry != entryRep {
                     self.update(entry: entry, with: entryRep)
                 } else if entry == nil {
@@ -40,20 +40,20 @@ class CoreDataImporter {
         entry.identifier = entryRep.identifier
     }
     
-    private func fetchSingleEntryFromPersistentStore(with identifier: String?, in context: NSManagedObjectContext) -> Entry? {
-        
-        guard let identifier = identifier else { return nil }
-        
+    private func fetchEntriesFromPersistentStore(entries: [EntryRepresentation], context: NSManagedObjectContext) -> [String : Entry] {
         let fetchRequest: NSFetchRequest<Entry> = Entry.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "identifier == %@", identifier)
+        let identifiers: [String] = entries.compactMap { $0.identifier }
+        fetchRequest.predicate = NSPredicate(format: "identifier IN %@", identifiers)
         
-        var result: Entry? = nil
-        do {
-            result = try context.fetch(fetchRequest).first
-        } catch {
-            NSLog("Error fetching single entry: \(error)")
+        var result: [String : Entry]? = [:]
+        let fetchedEntries = try context.fetch(fetchRequest)
+        for entry in fetchedEntries {
+            result?[entry.identifier!] = entry
         }
-        return result
+        catch {
+            NSLog("Error fetching entries: \(error)")
+            return result
+        }
     }
     
     private func timeChecker() {
