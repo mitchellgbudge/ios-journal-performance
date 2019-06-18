@@ -13,7 +13,6 @@ class EntriesTableViewController: UITableViewController, NSFetchedResultsControl
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        timeChecker()
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         self.refreshControl = refreshControl
@@ -23,7 +22,7 @@ class EntriesTableViewController: UITableViewController, NSFetchedResultsControl
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        timeChecker()
         tableView.reloadData()
     }
     
@@ -48,7 +47,7 @@ class EntriesTableViewController: UITableViewController, NSFetchedResultsControl
         let time = Date()
         let timeFormat = DateFormatter()
         timeFormat.dateFormat = "HH:mm:ss"
-        print("View finished loading at: \(timeFormat.string(from: time))")
+        print("App launched at: \(timeFormat.string(from: time))")
     }
     
     // MARK: - Table view data source

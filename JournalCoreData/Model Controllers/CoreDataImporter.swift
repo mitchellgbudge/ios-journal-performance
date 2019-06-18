@@ -27,6 +27,7 @@ class CoreDataImporter {
                     _ = Entry(entryRepresentation: entryRep, context: self.context)
                 }
             }
+            self.timeChecker()
             completion(nil)
         }
     }
@@ -53,6 +54,13 @@ class CoreDataImporter {
             NSLog("Error fetching single entry: \(error)")
         }
         return result
+    }
+    
+    private func timeChecker() {
+        let time = Date()
+        let timeFormat = DateFormatter()
+        timeFormat.dateFormat = "HH:mm:ss"
+        print("Sync finished at: \(timeFormat.string(from: time))")
     }
     
     let context: NSManagedObjectContext
